@@ -1,0 +1,20 @@
+{% extends 'master_page.html' %}
+
+{% block content %}
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert-success">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+
+<div class="confirm-container">
+    <h2>Delete Income</h2>
+    <p>Are you sure you want to delete "{{ income }}"?</p>
+
+    <form method="post" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit">Yes, Delete</button>
+    </form>
+    <a href="{% url 'incomes:income_list' %}">Cancel</a>
+</div>
+{% endblock %}
