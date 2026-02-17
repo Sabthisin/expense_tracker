@@ -1,0 +1,44 @@
+{% extends 'master_page.html' %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Add New Debt</h2>
+
+    <form method="post">
+        {% csrf_token %}
+
+        {% if form.errors %}
+        <div class="alert alert-danger">
+            Please correct the errors below.
+        </div>
+        {% endif %}
+
+        {% for field in form %}
+            <div class="form-group mb-3">
+
+                {# Fix the confusion: show clear label #}
+                {% if field.name == 'lender' %}
+                    <label>Creditor (Person/Institution You Must Pay)</label>
+                    {{ field }}
+                    <small class="form-text text-muted">
+                        Example: Bank of Kathmandu, Ramesh Dai, Office Loan, etc.
+                    </small>
+
+                {% elif field.name == 'debtor' %}
+                    <label>Debtor (You)</label>
+                    {{ field }}
+                    <small class="form-text text-muted">This is the person who owes the money.</small>
+
+                {% else %}
+                    <label>{{ field.label }}</label>
+                    {{ field }}
+                {% endif %}
+
+                <small class="text-danger">{{ field.errors }}</small>
+            </div>
+        {% endfor %}
+
+        <button type="submit" class="btn btn-primary">Save Debt</button>
+    </form>
+</div>
+{% endblock %}
