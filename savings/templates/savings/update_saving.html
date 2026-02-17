@@ -1,0 +1,20 @@
+{% extends 'master_page.html' %}
+
+{% block content %}
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert-success">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+
+<div class="form-container">
+    <h2>Update Saving</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Update</button>
+        <a href="{% url 'savings:saving_list' %}" class="cancel-btn">Cancel</a>
+    </form>
+</div>
+{% endblock %}
+
