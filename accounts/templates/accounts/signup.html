@@ -1,0 +1,83 @@
+{% extends "master_page.html" %}
+
+{% block title %}Sign Up{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 85vh;">
+  <div class="card shadow p-4" style="max-width: 400px; width: 100%; border-radius: 15px;">
+    <h3 class="text-center mb-4">📝 Create Account</h3>
+
+    <!-- Display general messages -->
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} text-center">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      <!-- Username -->
+      <div class="mb-3">
+        <label for="id_username" class="form-label">Username</label>
+        {{ form.username }}
+        {% if form.username.errors %}
+          <div class="text-danger small mt-1">{{ form.username.errors }}</div>
+        {% endif %}
+      </div>
+
+      <!-- Email -->
+      <div class="mb-3">
+        <label for="id_email" class="form-label">Email</label>
+        {{ form.email }}
+        {% if form.email.errors %}
+          <div class="text-danger small mt-1">{{ form.email.errors }}</div>
+        {% endif %}
+      </div>
+
+      <!-- Password -->
+      <div class="mb-3 position-relative">
+        <label for="id_password1" class="form-label">Password</label>
+        {{ form.password1 }}
+        <span onclick="togglePassword('id_password1')" 
+              style="position:absolute; right:10px; top:38px; cursor:pointer; user-select:none;">
+          👁
+        </span>
+        {% if form.password1.errors %}
+          <div class="text-danger small mt-1">{{ form.password1.errors }}</div>
+        {% endif %}
+      </div>
+
+      <!-- Confirm Password -->
+      <div class="mb-3 position-relative">
+        <label for="id_password2" class="form-label">Confirm Password</label>
+        {{ form.password2 }}
+        <span onclick="togglePassword('id_password2')" 
+              style="position:absolute; right:10px; top:38px; cursor:pointer; user-select:none;">
+          👁
+        </span>
+        {% if form.password2.errors %}
+          <div class="text-danger small mt-1">{{ form.password2.errors }}</div>
+        {% endif %}
+      </div>
+
+      <div class="text-center">
+        <button type="submit" class="btn btn-primary w-100">Sign Up</button>
+      </div>
+
+      <div class="text-center mt-3">
+        <p>Already have an account? 
+          <a href="{% url 'accounts:login' %}" class="text-decoration-none">Login</a>
+        </p>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+function togglePassword(fieldId) {
+  const field = document.getElementById(fieldId);
+  field.type = (field.type === "password") ? "text" : "password";
+}
+</script>
+{% endblock %}

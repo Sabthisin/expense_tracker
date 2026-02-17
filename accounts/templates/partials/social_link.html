@@ -1,0 +1,17 @@
+{% if url %}
+<div class="col-md-4">
+    <div class="social-link-box">
+        <a href="{{ url }}" target="_blank">
+            <i class="bi bi-{{ icon }}"></i>
+            {{ label }}
+        </a>
+    </div>
+</div>
+{% else %}
+<div class="col-md-4">
+    <div class="social-link-box text-muted">
+        <i class="bi bi-{{ icon }}"></i>
+        {{ label }} (Not Added)
+    </div>
+</div>
+{% endif %}

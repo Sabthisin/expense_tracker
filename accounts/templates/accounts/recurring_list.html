@@ -1,0 +1,41 @@
+{% extends 'master_page.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Your Recurring Transactions</h2>
+    <a href="{% url 'accounts:add_recurring' %}" class="btn btn-primary mb-3">Add New Recurring Transaction</a>
+
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Amount</th>
+                <th>Type</th>
+                <th>Start Date</th>
+                <th>Next Run</th>
+                <th>Active</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for recurring in recurring_list %}
+            <tr>
+                <td>{{ recurring.name }}</td>
+                <td>{{ recurring.amount }}</td>
+                <td>{{ recurring.transaction_type }}</td>
+                <td>{{ recurring.start_date }}</td>
+                <td>{{ recurring.next_run }}</td>
+                <td>{{ recurring.is_active|yesno:"Yes,No" }}</td>
+                <td>
+                    <a href="{% url 'accounts:edit_recurring' recurring.pk %}" class="btn btn-sm btn-warning">Edit</a>
+                    <a href="{% url 'accounts:delete_recurring' recurring.pk %}" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" class="text-center">No recurring transactions yet.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

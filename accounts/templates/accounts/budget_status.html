@@ -1,0 +1,170 @@
+{% extends 'master_page.html' %}
+{% load static %}
+
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<style>
+    body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%); min-height: 100vh; }
+    .glass-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 1.25rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .glass-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12); }
+    .metric-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+    }
+    .expense-card { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+    .deviation-card.success { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+    .deviation-card.warning { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+    .deviation-card.danger { background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%); }
+    .status-card { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
+    .progress-custom {
+        height: 40px;
+        border-radius: 1rem;
+        overflow: hidden;
+        background: rgba(0,0,0,0.08);
+    }
+    .progress-bar-custom {
+        font-weight: 700;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+    }
+    .btn-modern {
+        border-radius: 50px;
+        padding: 0.9rem 2.5rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        transition: all 0.3s ease;
+    }
+    .btn-modern:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+    }
+    .icon-circle {
+        width: 70px; height: 70px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        margin: 0 auto 1rem;
+        background: rgba(255,255,255,0.25);
+        backdrop-filter: blur(10px);
+    }
+</style>
+
+<div class="container py-5 py-lg-7">
+    <div class="mx-auto" style="max-width: 1200px;">
+
+        <!-- Header -->
+        <div class="text-center mb-5">
+            <h1 class="display-4 fw-bold text-dark mb-3" style="letter-spacing: -1px;">
+                <i class="bi bi-graph-up-arrow text-primary me-3"></i>Budget Deviation Dashboard
+            </h1>
+            <p class="lead text-muted">Real-time insights into your financial health</p>
+        </div>
+
+        <!-- Metric Cards -->
+        <div class="row g-4 mb-5">
+
+            <!-- Budget Limit -->
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="card glass-card metric-card h-100 text-white">
+                    <div class="card-body p-4 text-center">
+                        <div class="icon-circle"><i class="bi bi-wallet2 display-5"></i></div>
+                        <p class="small text-white-50 text-uppercase fw-bold mb-1">Budget Limit</p>
+                        <h3 class="fw-bold mb-0">Rs. {{ budget_limit|floatformat:0 }}</h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Expenses -->
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="card glass-card expense-card h-100 text-white">
+                    <div class="card-body p-4 text-center">
+                        <div class="icon-circle"><i class="bi bi-cash-stack display-5"></i></div>
+                        <p class="small text-white-50 text-uppercase fw-bold mb-1">Total Expenses</p>
+                        <h3 class="fw-bold mb-0">Rs. {{ total_expense|floatformat:0 }}</h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Deviation -->
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="card glass-card deviation-card {% if status_class == 'success' %}success{% elif status_class == 'warning' %}warning{% else %}danger{% endif %} h-100 text-white">
+                    <div class="card-body p-4 text-center">
+                        <div class="icon-circle">
+                            <i class="bi bi-exclamation-triangle-fill display-5 {% if deviation|floatformat:0 > 0 %}text-warning{% else %}text-white{% endif %}"></i>
+                        </div>
+                        <p class="small text-white-50 text-uppercase fw-bold mb-1">Deviation</p>
+                        <h3 class="fw-bold mb-0">Rs. {{ deviation|floatformat:0 }}</h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Current Status -->
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="card glass-card h-100 border-0 status-card">
+                    <div class="card-body p-4 text-center">
+                        <div class="icon-circle shadow-lg">
+                            <i class="bi bi-speedometer2 display-5 text-{{ status_class }}"></i>
+                        </div>
+                        <p class="small text-muted text-uppercase fw-bold mb-1">Current Status</p>
+                        <h4 class="fw-bold text-{{ status_class }} mb-0">{{ status }}</h4>
+                        <span class="badge bg-{{ status_class }} mt-2 fs-6 px-3 py-2">{{ percent_used|floatformat:1 }}% Used</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Progress Section -->
+        <div class="card glass-card shadow-lg mb-5 border-0 overflow-hidden">
+            <div class="card-body p-5">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="fw-bold text-dark mb-0">Expense vs Budget Ratio</h4>
+                    <div class="fs-3 fw-bold text-{{ status_class }}">{{ percent_used|floatformat:1 }}%</div>
+                </div>
+
+                <div class="progress-custom shadow-sm">
+                    <div class="progress-bar-custom progress-bar-striped progress-bar-animated text-white"
+                         role="progressbar"
+                         style="width: {{ percent_used }}%;
+                                background: linear-gradient(90deg, 
+                                    {% if status_class == 'success' %}#56ab2f, #a8e6cf
+                                    {% elif status_class == 'warning' %}#ffb200, #ff7733
+                                    {% else %}#ff416c, #ff4b2b{% endif %});"
+                         aria-valuenow="{{ percent_used }}" aria-valuemin="0" aria-valuemax="100">
+                        {{ percent_used|floatformat:1 }}% Used
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between mt-3 text-muted fw-medium">
+                    <span>Rs. 0</span>
+                    <span>Rs. {{ budget_limit|floatformat:0 }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Button -->
+        <div class="text-center py-5">
+            <a href="{% url 'accounts:update_budget' %}" 
+               class="btn btn-lg btn-{{ status_class }} btn-modern fw-bold shadow-lg">
+                <i class="bi bi-pencil-square me-2"></i>
+                Update Budget Settings
+            </a>
+            <p class="text-muted mt-3">Adjust your budget limit or categories anytime</p>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,15 @@
+<div class="detail-item">
+    <i class="bi bi-{{ icon }}"></i>
+    <div class="flex-grow-1">
+        <div class="fw-bold text-dark">{{ label }}</div>
+        <div class="text-secondary small">
+            {{ value }}
+            {% if visibility %}
+                <span class="badge rounded-pill ms-2 
+                    {% if visibility == 'Public' %}text-bg-success{% else %}text-bg-warning{% endif %}">
+                    {{ visibility }}
+                </span>
+            {% endif %}
+        </div>
+    </div>
+</div>

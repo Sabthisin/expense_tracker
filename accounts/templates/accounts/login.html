@@ -1,0 +1,75 @@
+{% extends "master_page.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2 class="text-center mb-4">🔐 Login</h2>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-danger text-center">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="post" novalidate>
+        {% csrf_token %}
+
+        <!-- Username or Email -->
+        <div class="mb-3">
+            <label for="id_username_email" class="form-label">Username or Email</label>
+            <input type="text" name="username_email" id="id_username_email" 
+                   class="form-control" placeholder="Enter username or email" 
+                   value="{{ request.POST.username_email|default:'' }}">
+            {% if form.errors.username_email %}
+                <div class="text-danger">{{ form.errors.username_email }}</div>
+            {% endif %}
+        </div>
+
+        <!-- Password -->
+        <div class="mb-3 position-relative">
+            <label for="id_password" class="form-label">Password</label>
+            {{ form.password }}
+            <span onclick="togglePassword('id_password')" 
+                  style="position:absolute; right:10px; top:38px; cursor:pointer; user-select:none;">
+                👁
+            </span>
+        </div>
+
+        <!-- Forgot password link -->
+        <div class="mb-3 text-end">
+            <a href="{% url 'accounts:password_reset' %}" class="text-decoration-none text-primary">
+                Forgot Password?
+            </a>
+        </div>
+
+        <div class="text-center">
+            <button type="submit" class="btn btn-custom" style="width: 150px;">Login</button>
+        </div>
+
+        <p class="text-center mb-0 mt-2">
+            Don't have an account? 
+            <a href="{% url 'accounts:signup' %}" class="text-decoration-none fw-bold text-primary">Sign Up</a>
+        </p>
+    </form>
+</div>
+
+<script>
+function togglePassword(fieldId) {
+    const field = document.getElementById(fieldId);
+    field.type = (field.type === "password") ? "text" : "password";
+}
+</script>
+
+<style>
+.form-control {
+    padding: 0.5rem 0.75rem;
+}
+.text-danger {
+    font-size: 0.85rem;
+    margin-top: 2px;
+}
+</style>
+{% endblock %}

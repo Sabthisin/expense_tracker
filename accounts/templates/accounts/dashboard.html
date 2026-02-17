@@ -1,0 +1,148 @@
+{% extends 'master_page.html' %}
+{% load static %}
+
+{% block title %}Dashboard | Expense Tracker{% endblock %}
+
+{% block content %}
+
+<div class="container py-5" style="flex: 1;">
+
+<!-- Header -->
+<div class="text-center mb-5">
+    <h1 class="fw-bold text-dark">Financial Overview</h1>
+    <p class="text-secondary fs-5">Quick overview of your finances</p>
+</div>
+<div class="alert alert-info">
+    <b>Predicted Next Month Expense:</b> Rs. {{ predicted_expense }}
+</div>
+
+<!-- Summary Cards -->
+<div class="row g-4 justify-content-center mb-5 pb-4">
+    <!-- Income -->
+    <div class="col-md-6 col-lg-3">
+        <div class="card shadow-lg text-white card-hover" style="background-color:#28a745;">
+            <div class="card-body text-center p-4">
+                <h5>Total Income</h5>
+                <p class="fs-4 fw-bold">Rs. {{ total_income|default:"0.00" }}</p>
+                <div class="progress rounded-pill mt-2" style="height: 12px;">
+                    <div class="progress-bar" style="width: {{ income_percent }}%; background-color:#1e7e34;">
+                        {{ income_percent }}%
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Expense -->
+    <div class="col-md-6 col-lg-3">
+        <div class="card shadow-lg text-white card-hover" style="background-color:#dc3545;">
+            <div class="card-body text-center p-4">
+                <h5>Total Expense</h5>
+                <p class="fs-4 fw-bold">Rs. {{ total_expense|default:"0.00" }}</p>
+                <div class="progress rounded-pill mt-2" style="height: 12px;">
+                    <div class="progress-bar" style="width: {{ expense_percent }}%; background-color:#b02a37;">
+                        {{ expense_percent }}%
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Savings -->
+    <div class="col-md-6 col-lg-3">
+        <div class="card shadow-lg text-white card-hover" style="background-color:#6f42c1;">
+            <div class="card-body text-center p-4">
+                <h5>Total Savings</h5>
+                <p class="fs-4 fw-bold">Rs. {{ total_saving|default:"0.00" }}</p>
+                <div class="progress rounded-pill mt-2" style="height: 12px;">
+                    <div class="progress-bar" style="width: {{ saving_percent }}%; background-color:#59359a;">
+                        {{ saving_percent }}%
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Debts -->
+    <div class="col-md-6 col-lg-3">
+        <div class="card shadow-lg text-dark card-hover" style="background-color:#ffc107;">
+            <div class="card-body text-center p-4">
+                <h5>Total Debts</h5>
+                <p class="fs-4 fw-bold">Rs. {{ total_debt|default:"0.00" }}</p>
+                <div class="progress rounded-pill mt-2" style="height: 12px;">
+                    <div class="progress-bar" style="width: {{ debt_percent }}%; background-color:#e0a800;">
+                        {{ debt_percent }}%
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Financial Trends Bar Chart -->
+<div class="card shadow-sm border-0 p-3 mb-4" style="border-radius: 1rem; max-width: 1100px; margin: auto;">
+    <h5 class="fw-bold text-primary mb-3 text-center">Financial Trends</h5>
+    <div style="height:350px;"> <!-- Short vertical container -->
+        <canvas id="financialChart"></canvas>
+    </div>
+</div>
+<div class="text-center my-4">
+    <a href="{% url 'accounts:set_goals' %}" class="btn btn-primary btn-lg rounded-pill px-5 shadow">
+        <i class="bi bi-target me-2"></i> Update My Financial Goals
+    </a>
+</div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('financialChart').getContext('2d');
+
+    const labels = JSON.parse('{{ chart_labels|safe|default:"[\"Income\",\"Expense\",\"Saving\",\"Debt\"]" }}');
+    const data = JSON.parse('{{ chart_data|safe|default:"[50, 60, 40, 30]" }}');
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Progress (%)',
+                data: data,
+                backgroundColor: ['#28a745','#dc3545','#6f42c1','#ffc107'],
+                borderRadius: 10,
+                barThickness: 100,
+                maxBarThickness: 80
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            layout: { padding: 10 },
+            scales: {
+                y: { 
+                    beginAtZero: true, 
+                    max: 100,
+                    title: { display: true, text: 'Percentage (%)', font: { size: 12 } },
+                    ticks: { stepSize: 20, font: { size: 12 } }
+                },
+                x: { 
+                    grid: { display: false }, 
+                    ticks: { font: { size: 12 } } 
+                }
+            },
+            plugins: {
+                legend: { display: false },
+                tooltip: { mode: 'index', intersect: false }
+            }
+        }
+    });
+});
+</script>
+
+{% endblock %}
+ 

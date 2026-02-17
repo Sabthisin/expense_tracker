@@ -1,0 +1,23 @@
+{% extends 'master_page.html' %}
+
+{% block content %}
+<div class="container py-4">
+
+    <h2 class="mb-4">Update Monthly Budget</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <div class="mt-3">
+            <button type="submit" class="btn btn-success me-2">
+                <i class="bi bi-check-circle me-1"></i> Save
+            </button>
+            <a href="{% url 'accounts:budget_status' %}" class="btn btn-secondary">
+                <i class="bi bi-x-circle me-1"></i> Cancel
+            </a>
+        </div>
+    </form>
+
+</div>
+{% endblock %}
